@@ -272,12 +272,12 @@ export default async function LessonDetailPage({ params }: Props) {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
-              ✓ Dersi Tamamla
-            </button>
-            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+            <Link
+              href={`/lessons/${id}/quiz`}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
               📝 Quiz'e Geç
-            </button>
+            </Link>
           </div>
         </div>
 
