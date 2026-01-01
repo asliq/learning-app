@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model - Kullanıcı bilgileri
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String   // Hash'lenmiş şifre
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // İlişkiler
+  progress  Progress[]
+  quizScores QuizScore[]
+
+  @@map("users")
+}
+
+// Lesson model - Ders bilgileri
+model Lesson {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  content     String   @db.Text
+  duration    String
+  level       String
+  emoji       String
+  order       Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // İlişkiler
+  progress   Progress[]
+  quizScores QuizScore[]
+
+  @@map("lessons")
+}
+
+// Progress model - Kullanıcı ders ilerlemesi
+model Progress {
+  id          String   @id @default(cuid())
+  userId      String
+  lessonId    Int
+  isCompleted Boolean  @default(false)
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // İlişkiler
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@map("progress")
+}
+
+// QuizScore model - Quiz sonuçları
+model QuizScore {
+  id        String   @id @default(cuid())
+  userId    String
+  lessonId  Int
+  score     Int      // 0-100 arası
+  answers   Json     // Verilen cevaplar
+  createdAt DateTime @default(now())
+
+  // İlişkiler
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_scores")
+}
+
+// Contact model - İletişim form mesajları
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contacts")
+}
